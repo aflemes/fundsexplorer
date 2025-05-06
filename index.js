@@ -7,7 +7,9 @@ const PORT = process.env.PORT || 3000;
 async function scrapeDividendos(fiiCode) {
     const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
 
-    const browser = await puppeteer.launch(args: ['--no-sandbox', '--disable-setuid-sandbox']);    
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });  
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2' });
     try {
