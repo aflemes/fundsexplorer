@@ -50,6 +50,7 @@ async function scrapeDividendos(fiiCode) {
 }
 
 app.get('/dividendos/:fiiCode', async (req, res) => {
+    console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
@@ -64,5 +65,5 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`API rodando em http://localhost:${PORT}`);
+    console.log(`API rodando...`);
 });
