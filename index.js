@@ -8,10 +8,12 @@ async function scrapeDividendos(fiiCode) {
     const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
 
     const browser = await puppeteer.launch({
+        ignoreHTTPSErrors: true,
+        headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });  
+    });   
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url, { waitUntil: 'load' });
     try {
         await page.waitForSelector('div.dividends', { timeout: 10000 });        
 
