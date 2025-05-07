@@ -1,7 +1,6 @@
-# Usa imagem base com Node.js e suporte a Puppeteer
 FROM node:20-slim
 
-# Instala dependências do Chromium
+# Instala dependências do Chromium (inclui libgbm1)
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -21,24 +20,17 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
+    libgbm1 \              # <- ESSENCIAL PARA RESOLVER SEU ERRO
     xdg-utils \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Cria diretório da app
 WORKDIR /app
 
-# Copia dependências
 COPY package*.json ./
-
-# Instala dependências do projeto
 RUN npm install
 
-# Copia o restante da aplicação
 COPY . .
 
-# Expõe a porta para o Railway
 EXPOSE 3000
-
-# Inicia o app
 CMD ["npm", "start"]
