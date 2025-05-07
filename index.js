@@ -67,6 +67,30 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
     }
 });
 
+app.get('/dividendos/csv/:fiiCode', async (req, res) => {
+    console.log("Recebi request");
+    const fiiCode = req.params.fiiCode.toUpperCase();
+
+    try {
+        const dividendos = await scrapeDividendos(fiiCode);
+        if (dividendos.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
+        }
+        // Montar CSV
+        const headers = Object.keys(dividendos[0]);
+        const csv = [
+            headers.join(","),
+            ...dividendos.map(obj => headers.map(key => JSON.stringify(obj[key] ?? "")).join(","))
+        ].join("\n");
+
+        // Definir o tipo de conteúdo como CSV
+        res.setHeader('Content-Type', 'text/csv');
+        res.send(csv);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`API rodando em ${PORT}`);
 });
