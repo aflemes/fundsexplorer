@@ -65,5 +65,5 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`API rodando...`);
+    console.log(`API rodando em ${PORT}`);
 });
