@@ -13,9 +13,11 @@ async function scrapeDividendos(fiiCode) {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });   
     const page = await browser.newPage();
+
+    page.setDefaultNavigationTimeout(0); 
     await page.goto(url, { waitUntil: 'load' });
     try {
-        await page.waitForSelector('div.dividends', { timeout: 10000 });        
+        await page.waitForSelector('div.dividends');        
 
         const dividendsData = await page.evaluate(() => {
             const div = document.querySelector('div.dividends');
