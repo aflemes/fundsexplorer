@@ -35,11 +35,10 @@ async function scrapeDividendos(fiiCode) {
             if (record.length === 6) {
                 const obj = {};
                 headers.forEach((header, index) => {
-                    if (header == "Tipo")
-                        continue;
-                    
-                    let value = record[index].indexOf("R$") > -1 ? record[index].replace("R$","").trim() : record[index];
-                    obj[header] = value;
+                    if (header !== "Tipo"){
+                        let value = record[index].indexOf("R$") > -1 ? record[index].replace("R$","").trim() : record[index];
+                        obj[header] = value;
+                    }
                 });
                 result.push(obj);
             }
