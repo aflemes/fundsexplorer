@@ -26,7 +26,7 @@ async function scrapeDividendos(fiiCode) {
         });
         
         const lines = dividendsData.split('\n');
-        const headers = lines.slice(1, 6); // ["Tipo", "Data com", ..., "Yield (%)"]
+        const headers = lines.slice(0, 6); // ["Tipo", "Data com", ..., "Yield (%)"]
         const dataLines = lines.slice(6).filter(l => !l.startsWith("Ver todos os"));
 
         const result = [];
@@ -35,6 +35,9 @@ async function scrapeDividendos(fiiCode) {
             if (record.length === 6) {
                 const obj = {};
                 headers.forEach((header, index) => {
+                    if (header == "Tipo")
+                        continue;
+                    
                     let value = record[index].indexOf("R$") > -1 ? record[index].replace("R$","").trim() : record[index];
                     obj[header] = value;
                 });
