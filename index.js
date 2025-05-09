@@ -52,7 +52,7 @@ async function scrapeDividendos(fiiCode) {
     }
 }
 
-sync function scrapeGeneralInfo(fiiCode) {
+async function scrapeDetails(fiiCode) {
     const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
 
     const browser = await puppeteer.launch({
@@ -67,28 +67,28 @@ sync function scrapeGeneralInfo(fiiCode) {
     try {
         await page.waitForSelector('wrapper indicators');        
 
-        const general = await page.evaluate(() => {
+        const details = await page.evaluate(() => {
             const div = document.querySelector('div.wrapper indicators');
             
             return div ? div.innerText : null;
         });
 
-        console.log(JSON.stringify(general));
+        console.log(JSON.stringify(details));
 
         await browser.close();
-        return general;
+        return details;
     } catch (err) {
         await browser.close();
-        throw new Error('Erro ao carregar a tabela de dividendos');
+        throw new Error('Erro ao carregar a tabela de detalhes');
     }
 }
 
-app.get('/details/:fiiCode', async (req, res) => {
+app.get('/detalhes/:fiiCode', async (req, res) => {
     console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
-        const general = await scrapeGeneralInfo(fiiCode);
+        const general = await scrapeDetails(fiiCode);
         if (dividendos.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
