@@ -65,34 +65,69 @@ async function scrapeDetails(fiiCode) {
     page.setDefaultNavigationTimeout(0); 
     await page.goto(url, { waitUntil: 'load' });
     try {
-        await page.waitForSelector('wrapper indicators');        
+        await page.waitForSelector('div.indicators');        
 
         const details = await page.evaluate(() => {
-            const div = document.querySelector('div.wrapper indicators');
+            const div = document.querySelector('div.indicators');
             
             return div ? div.innerText : null;
         });
 
-        console.log(JSON.stringify(details));
+        var output = details?.split("\n\n");
+        var parsed = {}
+        
+        for (var index=0; index < output.length; index+=2){
+            let element = output[index];
+            let value = output[index + 1];
+
+            parsed[element] = value;
+        }
 
         await browser.close();
-        return details;
+        return parsed;
     } catch (err) {
         await browser.close();
         throw new Error('Erro ao carregar a tabela de detalhes');
     }
 }
 
+app.get('/detalhes/csv/:fiiCode', async (req, res) => {
+    console.log("Recebi request");
+    const fiiCode = req.params.fiiCode.toUpperCase();
+
+    try {
+        const detalhes = await scrapeDetails(fiiCode);
+        if (detalhes.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
+        }
+
+        // Montar CSV
+        const headers = Object.keys(detalhes);
+        const values = Object.values(detalhes);
+
+        const csvLines = [
+            headers.join(','),   // primeira linha: cabeçalhos
+            values.join(',')     // segunda linha: valores
+        ];
+
+        // Definir o tipo de conteúdo como CSV
+        res.setHeader('Content-Type', 'text/csv');
+        res.send(csvLines.join('\n'));
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/detalhes/:fiiCode', async (req, res) => {
     console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
-        const general = await scrapeDetails(fiiCode);
-        if (dividendos.length === 0) {
+        const detalhes = await scrapeDetails(fiiCode);
+        if (detalhes.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
-        res.json(general);
+        res.json(detalhes);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
