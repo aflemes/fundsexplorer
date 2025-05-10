@@ -94,6 +94,21 @@ async function scrapeDetails(fiiCode) {
     }
 }
 
+app.get('/pvp/:fiiCode', async (req, res) => {
+    const fiiCode = req.params.fiiCode.toUpperCase();
+
+    try {
+        const detalhes = await scrapeDetails(fiiCode);
+        if (detalhes.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
+        }
+
+        res.send(detalhes["P/VP"]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/detalhes/csv/:fiiCode', async (req, res) => {
     const fiiCode = req.params.fiiCode.toUpperCase();
 
