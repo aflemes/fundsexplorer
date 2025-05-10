@@ -82,7 +82,7 @@ async function scrapeDetails(fiiCode) {
             let element = output[index];
             let value = output[index + 1];
 
-            parsed[element] = value;
+            parsed[element] = value.replace(",",".");
         }
 
         await browser.close();
@@ -108,8 +108,8 @@ app.get('/detalhes/csv/:fiiCode', async (req, res) => {
         const values = Object.values(detalhes);
 
         const csvLines = [
-            headers.join(';'),   // primeira linha: cabeçalhos
-            values.join(';')     // segunda linha: valores
+            headers.join(','),   // primeira linha: cabeçalhos
+            values.join(',')     // segunda linha: valores
         ];
 
         // Definir o tipo de conteúdo como CSV
