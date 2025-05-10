@@ -108,8 +108,8 @@ app.get('/detalhes/csv/:fiiCode', async (req, res) => {
         const values = Object.values(detalhes);
 
         const csvLines = [
-            headers.join(','),   // primeira linha: cabeçalhos
-            values.join(',')     // segunda linha: valores
+            headers.join(';'),   // primeira linha: cabeçalhos
+            values.join(';')     // segunda linha: valores
         ];
 
         // Definir o tipo de conteúdo como CSV
