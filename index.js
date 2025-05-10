@@ -82,7 +82,7 @@ async function scrapeDetails(fiiCode) {
             let element = output[index];
             let value = output[index + 1];
 
-            parsed[element] = value.replace(",",".");
+            parsed[element] = value;
         }
 
         await browser.close();
