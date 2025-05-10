@@ -73,7 +73,9 @@ async function scrapeDetails(fiiCode) {
             return div ? div.innerText : null;
         });
 
-        var output = details?.split("\n\n");
+        var replaced = details.replace(/últ\. 12 meses\n\n|por cota\n\n/g, "");
+
+        var output = replaced?.split("\n\n");
         var parsed = {}
         
         for (var index=0; index < output.length; index+=2){
@@ -86,13 +88,13 @@ async function scrapeDetails(fiiCode) {
         await browser.close();
         return parsed;
     } catch (err) {
+        console.log(err)
         await browser.close();
         throw new Error('Erro ao carregar a tabela de detalhes');
     }
 }
 
 app.get('/detalhes/csv/:fiiCode', async (req, res) => {
-    console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
@@ -119,7 +121,6 @@ app.get('/detalhes/csv/:fiiCode', async (req, res) => {
 });
 
 app.get('/detalhes/:fiiCode', async (req, res) => {
-    console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
@@ -134,7 +135,6 @@ app.get('/detalhes/:fiiCode', async (req, res) => {
 });
 
 app.get('/dividendos/:fiiCode', async (req, res) => {
-    console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
@@ -149,7 +149,6 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
 });
 
 app.get('/dividendos/csv/:fiiCode', async (req, res) => {
-    console.log("Recebi request");
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
