@@ -34,9 +34,7 @@ async function scrapeDetails(fiiCode) {
 
         let replaced = details.replace(/últ\. 12 meses\n\n|por cota\n\n/g, "");
         let output = replaced.split("\n\n");
-        let parsed = {};
-
-         console.log(JSON.stringify(output));
+        let parsed = {};         
 
         for (let i = 0; i < output.length; i += 2) {
             const key = output[i];
@@ -46,8 +44,8 @@ async function scrapeDetails(fiiCode) {
 
         await browser.close();
 
-        // Salva no Redis (TTL de 1 hora = 3600 segundos)
-        await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 3600);
+        // Salva no Redis (TTL de 10 dias = 864000 segundos)
+        await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 864000);
 
         return parsed;
 
@@ -110,8 +108,8 @@ async function scrapeDividendos(fiiCode) {
 
         await browser.close();
 
-        // ✅ Salva no Redis (TTL: 1 hora = 3600 segundos)
-        await redis.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+        // Salva no Redis (TTL de 10 dias = 864000 segundos)
+        await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 864000);
 
         return result;
 
@@ -168,9 +166,7 @@ app.get('/dividendos/data/com/:fiiCode', async (req, res) => {
         if (dividendos.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
-
-        console.log(JSON.stringify(dividendos));
-
+        
         let value = dividendos[0]["Data com"];
 
         res.send(value);
