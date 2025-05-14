@@ -3,6 +3,7 @@ FROM node:20-slim
 # Instala dependências do Chromium (inclui libgbm1)
 RUN apt-get update && apt-get install -y \
     wget \
+    chromium \
     ca-certificates \
     fonts-liberation \
     libappindicator3-1 \
