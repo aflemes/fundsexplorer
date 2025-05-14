@@ -109,46 +109,6 @@ app.get('/pvp/:fiiCode', async (req, res) => {
     }
 });
 
-app.get('/detalhes/csv/:fiiCode', async (req, res) => {
-    const fiiCode = req.params.fiiCode.toUpperCase();
-
-    try {
-        const detalhes = await scrapeDetails(fiiCode);
-        if (detalhes.length === 0) {
-            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
-        }
-
-        // Montar CSV
-        const headers = Object.keys(detalhes);
-        const values = Object.values(detalhes);
-
-        const csvLines = [
-            headers.join(','),   // primeira linha: cabeçalhos
-            values.join(',')     // segunda linha: valores
-        ];
-
-        // Definir o tipo de conteúdo como CSV
-        res.setHeader('Content-Type', 'text/csv');
-        res.send(csvLines.join('\n'));
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.get('/detalhes/:fiiCode', async (req, res) => {
-    const fiiCode = req.params.fiiCode.toUpperCase();
-
-    try {
-        const detalhes = await scrapeDetails(fiiCode);
-        if (detalhes.length === 0) {
-            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
-        }
-        res.json(detalhes);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 app.get('/dividendos/:fiiCode', async (req, res) => {
     const fiiCode = req.params.fiiCode.toUpperCase();
 
@@ -165,7 +125,7 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
     }
 });
 
-app.get('/dividendos/csv/:fiiCode', async (req, res) => {
+app.get('/dividendos/data/com/:fiiCode', async (req, res) => {
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
@@ -173,16 +133,29 @@ app.get('/dividendos/csv/:fiiCode', async (req, res) => {
         if (dividendos.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
-        // Montar CSV
-        const headers = Object.keys(dividendos[0]);
-        const csv = [
-            headers.join(","),
-            ...dividendos.map(obj => headers.map(key => JSON.stringify(obj[key] ?? "")).join(","))
-        ].join("\n");
 
-        // Definir o tipo de conteúdo como CSV
-        res.setHeader('Content-Type', 'text/csv');
-        res.send(csv);
+        let value = dividendos[0]["Data com"];
+
+        res.send(value);
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/dividendos/data/pgto/:fiiCode', async (req, res) => {
+    const fiiCode = req.params.fiiCode.toUpperCase();
+
+    try {
+        const dividendos = await scrapeDividendos(fiiCode);
+        if (dividendos.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
+        }
+
+        let value = dividendos[0]["Pagamento"];
+
+        res.send(value);
+        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
