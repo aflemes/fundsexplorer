@@ -145,6 +145,8 @@ app.get('/dividendos/data/com/:fiiCode', async (req, res) => {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
 
+        console.log(JSON.stringify(dividendos));
+
         let value = dividendos[0]["Data com"];
 
         res.send(value);
