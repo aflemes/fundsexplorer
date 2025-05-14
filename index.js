@@ -1,8 +1,9 @@
+require('dotenv').config();
+
 const express = require('express');
 const puppeteer = require('puppeteer');
 const Redis = require('ioredis');
-
-const redis = new Redis(); // padrão: localhost:6379
+const redis = new Redis(process.env.REDIS_URL); // padrão: localhost:6379
 const app = express();
 const PORT = process.env.PORT || 3000;
 
