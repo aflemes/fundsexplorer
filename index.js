@@ -15,6 +15,7 @@ async function scrapeDetails(fiiCode) {
 
         const browser = await puppeteer.launch({
             eadless: "new", // ou true
+            executablePath: '/usr/bin/chromium',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -75,6 +76,7 @@ async function scrapeDividendos(fiiCode) {
     try {
         const browser = await puppeteer.launch({
             eadless: "new", // ou true
+            executablePath: '/usr/bin/chromium',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
