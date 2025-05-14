@@ -153,11 +153,11 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
     const fiiCode = req.params.fiiCode.toUpperCase();
 
     try {
-        const dividendos = await scrapeDividendos(fiiCode);
-        if (dividendos.length === 0) {
+        const detalhes = await scrapeDetails(fiiCode);
+        if (detalhes.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
-        res.json(dividendos);
+        res.send(detalhes["Último Rendimento"]);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
