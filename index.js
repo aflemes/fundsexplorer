@@ -14,9 +14,14 @@ async function scrapeDetails(fiiCode) {
         const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
 
         const browser = await puppeteer.launch({
-            ignoreHTTPSErrors: true,
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            eadless: "new", // ou true
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-gpu',
+                '--disable-dev-shm-usage', // evita problemas de memória compartilhada
+                '--single-process',
+                '--no-zygote']
         });   
         const page = await browser.newPage();
 
@@ -69,10 +74,15 @@ async function scrapeDividendos(fiiCode) {
 
     try {
         const browser = await puppeteer.launch({
-            ignoreHTTPSErrors: true,
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });   
+            eadless: "new", // ou true
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-gpu',
+                '--disable-dev-shm-usage', // evita problemas de memória compartilhada
+                '--single-process',
+                '--no-zygote']
+        });  
         const page = await browser.newPage();
 
         page.setDefaultNavigationTimeout(0); 
