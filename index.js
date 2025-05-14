@@ -7,7 +7,7 @@ const redis = new Redis(process.env.REDIS_URL); // padrão: localhost:6379
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-async function scrapeDividendos(fiiCode) {
+async function scrapeDetails(fiiCode) {
     const cacheKey = `fii:${fiiCode}`;
 
     try {
@@ -65,45 +65,67 @@ async function scrapeDividendos(fiiCode) {
     }
 }
 
-async function scrapeDetails(fiiCode) {
+async function scrapeDividendos(fiiCode) {
     const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
+    const cacheKey = `dividendos:${fiiCode}`;
 
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });   
-    const page = await browser.newPage();
-
-    page.setDefaultNavigationTimeout(0); 
-    await page.goto(url, { waitUntil: 'load' });
     try {
-        await page.waitForSelector('div.indicators');        
+        const browser = await puppeteer.launch({
+            ignoreHTTPSErrors: true,
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });   
+        const page = await browser.newPage();
 
-        const details = await page.evaluate(() => {
-            const div = document.querySelector('div.indicators');
-            
+        page.setDefaultNavigationTimeout(0); 
+        await page.goto(url, { waitUntil: 'load' });
+
+        await page.waitForSelector('div.dividends');        
+
+        const dividendsData = await page.evaluate(() => {
+            const div = document.querySelector('div.dividends');
             return div ? div.innerText : null;
         });
 
-        var replaced = details.replace(/últ\. 12 meses\n\n|por cota\n\n/g, "");
+        if (!dividendsData) throw new Error("Dados de dividendos não encontrados");
 
-        var output = replaced?.split("\n\n");
-        var parsed = {}
-        
-        for (var index=0; index < output.length; index+=2){
-            let element = output[index];
-            let value = output[index + 1];
+        const lines = dividendsData.split('\n');
+        const headers = lines.slice(0, 6); // ["Tipo", "Data com", ..., "Yield (%)"]
+        const dataLines = lines.slice(6).filter(l => !l.startsWith("Ver todos os"));
 
-            parsed[element] = value.replace(",",".");
+        const result = [];
+        for (let i = 0; i < dataLines.length; i += 6) {
+            const record = dataLines.slice(i, i + 6);
+            if (record.length === 6) {
+                const obj = {};
+                headers.forEach((header, index) => {
+                    if (header !== "Tipo") {
+                        let value = record[index].includes("R$") ? record[index].replace("R$", "").trim() : record[index];
+                        obj[header] = value;
+                    }
+                });
+                result.push(obj);
+            }
         }
 
         await browser.close();
-        return parsed;
+
+        // ✅ Salva no Redis (TTL: 1 hora = 3600 segundos)
+        await redis.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+
+        return result;
+
     } catch (err) {
-        console.log(err)
-        await browser.close();
-        throw new Error('Erro ao carregar a tabela de detalhes');
+        console.error(`Erro ao buscar dividendos: ${err.message}`);
+
+        // ❌ Tenta buscar do cache
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+            console.log(`🔁 Retornando dividendos de cache para ${fiiCode}`);
+            return JSON.parse(cached);
+        }
+
+        throw new Error('Erro ao carregar dividendos e nenhum cache disponível.');
     }
 }
 
