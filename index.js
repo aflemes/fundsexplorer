@@ -36,6 +36,8 @@ async function scrapeDividendos(fiiCode) {
         let output = replaced.split("\n\n");
         let parsed = {};
 
+         console.log(JSON.stringify(output));
+
         for (let i = 0; i < output.length; i += 2) {
             const key = output[i];
             const value = output[i + 1];
