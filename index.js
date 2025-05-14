@@ -14,7 +14,7 @@ async function scrapeDetails(fiiCode) {
         const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
 
         const browser = await puppeteer.launch({
-            eadless: "new", // ou true
+            headless: "new", // ou true
             executablePath: '/usr/bin/chromium',
             args: [
                 '--no-sandbox',
@@ -75,7 +75,7 @@ async function scrapeDividendos(fiiCode) {
 
     try {
         const browser = await puppeteer.launch({
-            eadless: "new", // ou true
+            headless: "new", // ou true
             executablePath: '/usr/bin/chromium',
             args: [
                 '--no-sandbox',
