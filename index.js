@@ -103,7 +103,7 @@ app.get('/pvp/:fiiCode', async (req, res) => {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
 
-        res.send("'" + detalhes["P/VP"] + "'");
+        res.send(detalhes["P/VP"]);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
