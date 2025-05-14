@@ -157,7 +157,9 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
         if (detalhes.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
-        res.send(detalhes["Último Rendimento"]);
+        let value = detalhes["Último Rendimento"].replace("R$","");        
+        
+        res.send(value);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
