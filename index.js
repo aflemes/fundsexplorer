@@ -11,6 +11,8 @@ const fiiList = ["HGRU11", "HSML11", "BRCO11", "LVBI11", "PVBI11", "HGLG11", "TR
 async function scrapeDetails() {
     for (var index = 0; index < fiiList.length; index++){   
         let fiiCode =  fiiList[index];
+        console.log(`Buscando detalhes do FII: ${fiiCode}`);
+        
         const cacheKey = `fii:${fiiCode}`;
         
         try {
@@ -57,7 +59,7 @@ async function scrapeDetails() {
             await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 864000);    
     
         } catch (err) {    
-            throw new Error('Erro ao carregar dados e nenhum cache disponível.');
+            console.log(`Não foi possível obter os detalhes do FII ${fiiCode}`);
         }
     }
 }
@@ -66,6 +68,8 @@ async function scrapeDividendos() {
     for (var index = 0; index < fiiList.length; index++){
         const fiiCode = fiiList[index];
         const cacheKey = `dividendos:${fiiCode}`;
+
+        console.log(`Buscando dividendos do FII: ${fiiCode}`);
 
         try {
             const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
@@ -122,7 +126,7 @@ async function scrapeDividendos() {
     
         } 
         catch (err) {
-            throw new Error('Erro ao carregar dividendos e nenhum cache disponível.');
+            console.log(`Não foi possível obter os dividendos do FII ${fiiCode}`);
         }
     }
 }
