@@ -32,7 +32,7 @@ async function scrapeDetails() {
             const page = await browser.newPage();
     
             page.setDefaultNavigationTimeout(0); 
-            await page.goto(url, { waitUntil: 'load' });
+            await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     
             await page.waitForSelector('div.indicators');        
     
@@ -87,7 +87,7 @@ async function scrapeDividendos() {
             const page = await browser.newPage();
     
             page.setDefaultNavigationTimeout(0); 
-            await page.goto(url, { waitUntil: 'load' });
+            await page.goto(url, { waitUntil: 'load' , timeout: 30000});
     
             await page.waitForSelector('div.dividends');        
     
