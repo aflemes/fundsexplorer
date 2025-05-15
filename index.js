@@ -201,11 +201,7 @@ app.get('/dividendos/data/pgto/:fiiCode', async (req, res) => {
 
 app.get('/pvp/', async (req, res) => {
     try {
-        const detalhes = await scrapeDetails(fiiList);
-        if (detalhes.length === 0) {
-            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
-        }
-
+        const detalhes = await scrapeDetails(fiiList);        
         res.send(true);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -214,11 +210,7 @@ app.get('/pvp/', async (req, res) => {
 
 app.get('/dividendos/', async (req, res) => {
     try {
-        const detalhes = await scrapeDetails(fiiList);
-        if (detalhes.length === 0) {
-            return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
-        }
-
+        const detalhes = await scrapeDetails(fiiList);        
         res.send(true);
     } catch (error) {
         res.status(500).json({ error: error.message });
