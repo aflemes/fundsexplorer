@@ -1,0 +1,16 @@
+# .github/workflows/daily-call.yml
+name: Daily API Call
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # 6h UTC todos os dias
+  workflow_dispatch:
+
+jobs:
+  call-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Railway API
+        run: 
+          curl -X GET https://fundsexplorer-production.up.railway.app/pvp
+          curl -X GET https://fundsexplorer-production.up.railway.app/dividendos
