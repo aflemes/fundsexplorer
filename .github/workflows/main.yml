@@ -10,7 +10,9 @@ jobs:
   call-api:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Railway API
-        run: 
-          curl -X GET https://fundsexplorer-production.up.railway.app/pvp
-          curl -X GET https://fundsexplorer-production.up.railway.app/dividendos
+      - name: Chama a API do PVP em Railway
+        run: curl -X GET https://fundsexplorer-production.up.railway.app/pvp
+      - name: Chama a API dividendos em Railway
+        run: curl -X GET https://fundsexplorer-production.up.railway.app/dividendos
+
+          
