@@ -188,13 +188,15 @@ app.get('/dividendos/data/pgto/:fiiCode', async (req, res) => {
     try {
         const dividendos = await redis.get(cacheKey);
 
-        console.log("dividendos", dividendos);
+        console.log("dividendos", dividendos[0]);
         
         if (dividendos.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
 
-        let value = dividendos["Pagamento"];
+        let value = dividendos[0]["Pagamento"];
+
+        console.log("value", value);
 
         res.send(value);
         
