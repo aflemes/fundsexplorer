@@ -121,7 +121,7 @@ async function scrapeDividendos(fiiCode) {
         await browser.close();
 
         // Salva no Redis (TTL de 10 dias = 864000 segundos)
-        await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 864000);
+        await redis.set(cacheKey, JSON.stringify(result), 'EX', 864000);
 
         return result;
 
