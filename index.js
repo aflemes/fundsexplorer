@@ -34,7 +34,7 @@ async function scrapeDetails() {
             page.setDefaultNavigationTimeout(0); 
             await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     
-            await page.waitForSelector('div.indicators');        
+            await page.waitForSelector('div.indicators', { timeout: 30000 });        
     
             const details = await page.evaluate(() => {
                 const div = document.querySelector('div.indicators');
@@ -89,7 +89,7 @@ async function scrapeDividendos() {
             page.setDefaultNavigationTimeout(0); 
             await page.goto(url, { waitUntil: 'load' , timeout: 30000});
     
-            await page.waitForSelector('div.dividends');        
+            await page.waitForSelector('div.dividends', { timeout: 30000 });        
     
             const dividendsData = await page.evaluate(() => {
                 const div = document.querySelector('div.dividends');
