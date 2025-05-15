@@ -1,5 +1,5 @@
 # .github/workflows/daily-call.yml
-name: Daily API Call
+name: Daily API Call - PVP
 
 on:
   schedule:
@@ -9,10 +9,7 @@ on:
 jobs:
   call-api:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Chama a API do PVP em Railway
         run: curl -X GET https://fundsexplorer-production.up.railway.app/pvp
-      - name: Chama a API dividendos em Railway
-        run: curl -X GET https://fundsexplorer-production.up.railway.app/dividendos
-
-          
