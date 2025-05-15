@@ -29,13 +29,13 @@ async function scrapeDetails() {
                     '--single-process',
                     '--no-zygote']
             });   
-            const page = await browser.newPage();
-    
-            page.setDefaultNavigationTimeout(0); 
+            const page = await browser.newPage();    
+            console.log("depois new page");
             await page.goto(url, { waitUntil: 'load', timeout: 30000 });
-    
+            console.log("depois goto");
             await page.waitForSelector('div.indicators', { timeout: 30000 });        
-    
+            console.log("depois waitforsleector");
+            
             const details = await page.evaluate(() => {
                 const div = document.querySelector('div.indicators');
                 return div ? div.innerText : null;
@@ -86,7 +86,6 @@ async function scrapeDividendos() {
             });  
             const page = await browser.newPage();
     
-            page.setDefaultNavigationTimeout(0); 
             await page.goto(url, { waitUntil: 'load' , timeout: 30000});
     
             await page.waitForSelector('div.dividends', { timeout: 30000 });        
@@ -120,10 +119,7 @@ async function scrapeDividendos() {
             await browser.close();
     
             // Salva no Redis (TTL de 10 dias = 864000 segundos)
-            await redis.set(cacheKey, JSON.stringify(result), 'EX', 864000);
-    
-            return result;
-    
+            await redis.set(cacheKey, JSON.stringify(result), 'EX', 864000);    
         } 
         catch (err) {
             console.log(`Não foi possível obter os dividendos do FII ${fiiCode}`);
