@@ -182,9 +182,14 @@ app.get('/dividendos/data/com/:fiiCode', async (req, res) => {
 app.get('/dividendos/data/pgto/:fiiCode', async (req, res) => {
     const fiiCode = req.params.fiiCode.toUpperCase();
     const cacheKey = `dividendos:${fiiCode}`;
+
+    console.log("cacheKey", cacheKey);
     
     try {
         const dividendos = await redis.get(cacheKey);
+
+        console.log("dividendos", dividendos);
+        
         if (dividendos.length === 0) {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
