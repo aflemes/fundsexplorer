@@ -170,7 +170,7 @@ app.get('/dividendos/data/com/:fiiCode', async (req, res) => {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
         
-        let value = dividendos[0]["Data com"];
+        let value = dividendos["Data com"];
 
         res.send(value);
         
@@ -189,7 +189,7 @@ app.get('/dividendos/data/pgto/:fiiCode', async (req, res) => {
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         }
 
-        let value = dividendos[0]["Pagamento"];
+        let value = dividendos["Pagamento"];
 
         res.send(value);
         
