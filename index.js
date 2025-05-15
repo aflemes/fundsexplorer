@@ -10,7 +10,7 @@ const fiiList = ["HGRU11", "HSML11", "BRCO11", "LVBI11", "PVBI11", "HGLG11", "TR
 
 async function scrapeDetails() {
     for (var index = 0; index < fiiList.length; index++){   
-        let fiiCode =  fiiList[index;
+        let fiiCode =  fiiList[index];
         const cacheKey = `fii:${fiiCode}`;
         
         try {
