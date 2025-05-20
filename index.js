@@ -26,11 +26,9 @@ async function scrapeDetails() {
         console.log(`Buscando detalhes do FII: ${fiiCode}`);
         
         const cacheKey = `fii:${fiiCode}`;
-        
-        try {
-            const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;    
-              
-            const page = await browser.newPage();    
+        const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
+        const page = await browser.newPage();
+        try {            
             console.log("depois new page");
             await page.goto(url, { waitUntil: 'load', timeout: 30000 });
             console.log("depois goto");
@@ -86,15 +84,13 @@ async function scrapeDividendos() {
     for (var index = 0; index < fiiList.length; index++){
         const fiiCode = fiiList[index];
         const cacheKey = `dividendos:${fiiCode}`;
-
+        
         console.log(`Buscando dividendos do FII: ${fiiCode}`);
 
+        const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;            
+        const page = await browser.newPage();
         try {
-            const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;            
-            const page = await browser.newPage();
-    
-            await page.goto(url, { waitUntil: 'load' , timeout: 30000});
-    
+            await page.goto(url, { waitUntil: 'load' , timeout: 30000});    
             await page.waitForSelector('div.dividends', { timeout: 30000 });        
     
             const dividendsData = await page.evaluate(() => {
