@@ -9,6 +9,18 @@ const PORT = process.env.PORT || 3000;
 const fiiList = ["HGRU11", "HSML11", "BRCO11", "LVBI11", "PVBI11", "HGLG11", "TRXF11", "BTLG11", "XPML11", "HGCR11", "KNCR11", "MXRF11", "VRTA11", "RECR11", "CPTS11", "VGHF11", "TGAR11"]
 
 async function scrapeDetails() {
+    const browser = await puppeteer.launch({
+        headless: "new", // ou true
+        executablePath: '/usr/bin/chromium',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--disable-dev-shm-usage', // evita problemas de memória compartilhada
+            '--single-process',
+            '--no-zygote']
+    }); 
+    
     for (var index = 0; index < fiiList.length; index++){   
         let fiiCode =  fiiList[index];
         console.log(`Buscando detalhes do FII: ${fiiCode}`);
@@ -16,19 +28,8 @@ async function scrapeDetails() {
         const cacheKey = `fii:${fiiCode}`;
         
         try {
-            const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
-    
-            const browser = await puppeteer.launch({
-                headless: "new", // ou true
-                executablePath: '/usr/bin/chromium',
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-gpu',
-                    '--disable-dev-shm-usage', // evita problemas de memória compartilhada
-                    '--single-process',
-                    '--no-zygote']
-            });   
+            const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;    
+              
             const page = await browser.newPage();    
             console.log("depois new page");
             await page.goto(url, { waitUntil: 'load', timeout: 30000 });
@@ -55,21 +56,33 @@ async function scrapeDetails() {
                 const value = output[i + 1];
                 parsed[key] = value.replace(",", ".");
             }
-
-            console.log("antes close");
-            await browser.close();
-
-            console.log("closed");
             // Salva no Redis (TTL de 10 dias = 864000 segundos)
             await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 864000);    
     
         } catch (err) {    
             console.log(`Não foi possível obter os detalhes do FII ${fiiCode}`);
         }
+        finally{
+            await page.close();
+        }
     }
+
+    await browser.close();
 }
 
 async function scrapeDividendos() {
+    const browser = await puppeteer.launch({
+        headless: "new", // ou true
+        executablePath: '/usr/bin/chromium',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--disable-dev-shm-usage', // evita problemas de memória compartilhada
+            '--single-process',
+            '--no-zygote']
+    });
+    
     for (var index = 0; index < fiiList.length; index++){
         const fiiCode = fiiList[index];
         const cacheKey = `dividendos:${fiiCode}`;
@@ -77,18 +90,7 @@ async function scrapeDividendos() {
         console.log(`Buscando dividendos do FII: ${fiiCode}`);
 
         try {
-            const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
-            const browser = await puppeteer.launch({
-                headless: "new", // ou true
-                executablePath: '/usr/bin/chromium',
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-gpu',
-                    '--disable-dev-shm-usage', // evita problemas de memória compartilhada
-                    '--single-process',
-                    '--no-zygote']
-            });  
+            const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;            
             const page = await browser.newPage();
     
             await page.goto(url, { waitUntil: 'load' , timeout: 30000});
@@ -120,16 +122,18 @@ async function scrapeDividendos() {
                     result.push(obj);
                 }
             }
-    
-            await browser.close();
-    
             // Salva no Redis (TTL de 10 dias = 864000 segundos)
             await redis.set(cacheKey, JSON.stringify(result), 'EX', 864000);    
         } 
         catch (err) {
             console.log(`Não foi possível obter os dividendos do FII ${fiiCode}`);
         }
+        finally{
+            await page.close();
+        }
     }
+
+    await browser.close();
 }
 
 app.get('/pvp/:fiiCode', async (req, res) => {
