@@ -34,27 +34,32 @@ async function scrapeDetails() {
             await page.goto(url, { waitUntil: 'load', timeout: 30000 });
             console.log("depois goto");
             await page.waitForSelector('div.indicators', { timeout: 30000 });        
-            console.log("depois waitforsleector");
+            console.log("1 depois waitforsleector");
             
             const details = await page.evaluate(() => {
                 const div = document.querySelector('div.indicators');
                 return div ? div.innerText : null;
             });
+
+             console.log("depois evaluate");
     
             if (!details) throw new Error("Div 'indicators' não encontrada");
     
             let replaced = details.replace(/últ\. 12 meses\n\n|por cota\n\n/g, "");
             let output = replaced.split("\n\n");
             let parsed = {};         
-    
+
+             console.log("antes for");
             for (let i = 0; i < output.length; i += 2) {
                 const key = output[i];
                 const value = output[i + 1];
                 parsed[key] = value.replace(",", ".");
             }
-    
+
+            console.log("antes close");
             await browser.close();
-    
+
+            console.log("closed");
             // Salva no Redis (TTL de 10 dias = 864000 segundos)
             await redis.set(cacheKey, JSON.stringify(parsed), 'EX', 864000);    
     
