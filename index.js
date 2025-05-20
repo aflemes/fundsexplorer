@@ -205,7 +205,7 @@ app.get('/pvp/', async (req, res) => {
 
 app.get('/dividendos/', async (req, res) => {
     try {
-        const detalhes = await scrapeDetails(fiiList);        
+        const detalhes = await scrapeDividendos(fiiList);        
         res.send(true);
     } catch (error) {
         res.status(500).json({ error: error.message });
