@@ -29,26 +29,16 @@ async function scrapeDetails() {
         const url = `https://www.fundsexplorer.com.br/funds/${fiiCode}`;
         const page = await browser.newPage();
         try {            
-            console.log("depois new page");
             await page.goto(url, { waitUntil: 'load', timeout: 30000 });
-            console.log("depois goto");
             await page.waitForSelector('div.indicators', { timeout: 30000 });        
-            console.log("1 depois waitforsleector");
-            
             const details = await page.evaluate(() => {
                 const div = document.querySelector('div.indicators');
                 return div ? div.innerText : null;
             });
-
-             console.log("depois evaluate");
-    
             if (!details) throw new Error("Div 'indicators' não encontrada");
-    
             let replaced = details.replace(/últ\. 12 meses\n\n|por cota\n\n/g, "");
             let output = replaced.split("\n\n");
             let parsed = {};         
-
-             console.log("antes for");
             for (let i = 0; i < output.length; i += 2) {
                 const key = output[i];
                 const value = output[i + 1];
