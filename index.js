@@ -128,11 +128,8 @@ app.get('/pvp/:fiiCode', async (req, res) => {
     
     try {
         const detalhes = JSON.parse(await redis.get(cacheKey));
-
-        console.log(JSON.stringify(detalhes));
-        console.log(detalhes);
         
-        if (detalhes === undefined)
+        if (detalhes === "")
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
 
         res.send(detalhes["P/VP"]);
@@ -147,7 +144,7 @@ app.get('/dividendos/:fiiCode', async (req, res) => {
     
     try {
         const detalhes = JSON.parse(await redis.get(cacheKey));
-        if (detalhes === undefined)
+        if (detalhes === "")
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         
         let value = detalhes["Último Rendimento"].replace("R$","");        
@@ -164,7 +161,7 @@ app.get('/dividendos/data/com/:fiiCode', async (req, res) => {
     
     try {
         const dividendos = JSON.parse(await redis.get(cacheKey));
-        if (dividendos === undefined)
+        if (dividendos === "")
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         
         let value = dividendos[0]["Data com"];
@@ -183,7 +180,7 @@ app.get('/dividendos/data/pgto/:fiiCode', async (req, res) => {
     try {
         const dividendos = JSON.parse(await redis.get(cacheKey));
         
-        if (dividendos === undefined)
+        if (dividendos === "")
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
         let value = dividendos[0]["Pagamento"];
 
