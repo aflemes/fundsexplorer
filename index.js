@@ -128,6 +128,10 @@ app.get('/pvp/:fiiCode', async (req, res) => {
     
     try {
         const detalhes = JSON.parse(await redis.get(cacheKey));
+
+        console.log(JSON.stringify(detalhes));
+        console.log(detalhes);
+        
         if (detalhes === undefined)
             return res.status(404).json({ error: 'Nenhuma informação encontrada para esse FII.' });
 
