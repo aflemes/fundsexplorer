@@ -51,11 +51,13 @@ async function scrapeDetails() {
             console.log(`Não foi possível obter os detalhes do FII ${fiiCode}`);
         }
         finally{
-            await page.close();
+            await page.close(); // fecha a aba            
         }
     }
 
     await browser.close();
+    const browserProcess = browser.process();
+    if (browserProcess) browserProcess.kill('SIGKILL'); // força encerramento
 }
 
 async function scrapeDividendos() {
@@ -120,6 +122,8 @@ async function scrapeDividendos() {
     }
 
     await browser.close();
+    const browserProcess = browser.process();
+    if (browserProcess) browserProcess.kill('SIGKILL'); // força encerramento
 }
 
 app.get('/pvp/:fiiCode', async (req, res) => {
